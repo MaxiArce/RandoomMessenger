@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "388988874826",
+    "firebase_url": "https://randoom-messenger-android.firebaseio.com",
+    "project_id": "randoom-messenger-android",
+    "storage_bucket": "randoom-messenger-android.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:388988874826:android:b5c44b139b462113",
+        "android_client_info": {
+          "package_name": "com.maxiarce.radoommessenger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "388988874826-f91lhuek8kljn9cphi5j5ice7gfrpc4u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.maxiarce.radoommessenger",
+            "certificate_hash": "772d1451f89c417f2d48093bde87df91edba289e"
+          }
+        },
+        {
+          "client_id": "388988874826-n8g2dl0dov3qgdatq752t4bb5oc5ng81.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBym7gyQVd5rhtK_z45aoUUK488elcR4lQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "388988874826-n8g2dl0dov3qgdatq752t4bb5oc5ng81.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
