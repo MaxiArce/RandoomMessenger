@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".ChatActivity">
 
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/chat_recyclerView_chatlog"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
@@ -16,7 +18,9 @@
         app:layout_constraintBottom_toTopOf="@+id/entermessage_edittext_chatlog"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+
+        />
 
     <EditText
         android:id="@+id/entermessage_edittext_chatlog"
@@ -38,10 +42,11 @@
         android:id="@+id/send_button_chatlog"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginBottom="8dp"
         android:background="@android:drawable/ic_menu_send"
+        android:onClick="sendMesssage"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

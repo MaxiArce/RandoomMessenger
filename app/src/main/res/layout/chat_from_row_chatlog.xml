@@ -19,15 +19,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textView_from_row"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:background="@drawable/button_background"
+        android:gravity="center"
+        android:maxWidth="260dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:text="Test Received Message"
         android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:maxWidth="260dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/imageView" />
