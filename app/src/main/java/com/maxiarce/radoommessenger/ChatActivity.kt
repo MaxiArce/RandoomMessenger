@@ -16,6 +16,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.maxiarce.radoommessenger.models.ChatMessage
 import com.maxiarce.radoommessenger.models.User
+import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
@@ -30,6 +31,8 @@ class ChatActivity : AppCompatActivity() {
 
     val adapter = GroupAdapter<ViewHolder>()
 
+    lateinit var toUser: User
+
     // shake animation for buttons
     lateinit var shakeAnimation: Animation
 
@@ -43,9 +46,12 @@ class ChatActivity : AppCompatActivity() {
         //set recyclerview adapter
         chat_recyclerView_chatlog.adapter = adapter
 
+        // set user name and image on the actionBar
+        toUser = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
+        supportActionBar?.title = toUser.username
 
-        val user = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
-        supportActionBar?.title = user.username
+//        val uri = toUser.profileImageUrl
+//        Picasso.get().load(uri).into(??)
 
         messagesListener()
     }
@@ -64,7 +70,7 @@ class ChatActivity : AppCompatActivity() {
                     if(chatMessage.fromId == FirebaseAuth.getInstance().uid){
                         adapter.add(ChatItemTo(chatMessage.text))
                     }else{
-                        if(chatMessage.toId == intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY).uid){
+                        if(chatMessage.toId == toUser.uid){
                             adapter.add(ChatItemFrom(chatMessage.text))
                         }
                     }
@@ -104,8 +110,8 @@ class ChatActivity : AppCompatActivity() {
         if(entermessage_edittext_chatlog.text.isNotBlank()){
             val chatMessage = ChatMessage(reference.key!!, textMessage, fromId!!, toId, System.currentTimeMillis())
 
-                //push the message to firebase
-                reference.setValue(chatMessage).addOnSuccessListener {
+            //push the message to firebase
+            reference.setValue(chatMessage).addOnSuccessListener {
                 Log.d("ChatActivity","Saved Sucessfully")
 
                 //clear editText
@@ -115,8 +121,8 @@ class ChatActivity : AppCompatActivity() {
 
         }
         if (entermessage_edittext_chatlog.text.isBlank()){
-                // implement shake animation for buttonSendMesage
-                send_button_chatlog.startAnimation(shakeAnimation)
+            // implement shake animation for buttonSendMesage
+            send_button_chatlog.startAnimation(shakeAnimation)
         }
     }
 
@@ -144,7 +150,7 @@ class ChatItemFrom(val text: String): Item<ViewHolder>(){
 class ChatItemTo(val text: String): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
 
-    viewHolder.itemView.textView_to_row.text = text
+        viewHolder.itemView.textView_to_row.text = text
 
     }
 
