@@ -1,10 +1,7 @@
 package com.maxiarce.radoommessenger
 
-import android.nfc.Tag
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.SystemClock
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
@@ -16,13 +13,12 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.maxiarce.radoommessenger.models.ChatMessage
 import com.maxiarce.radoommessenger.models.User
-import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_chat.*
-import kotlinx.android.synthetic.main.chat_from_row_chatlog.view.*
-import kotlinx.android.synthetic.main.chat_to_row_chatlog.view.*
+import kotlinx.android.synthetic.main.chat_to_row.view.*
+import kotlinx.android.synthetic.main.chat_from_row.view.*
 
 
 
@@ -58,7 +54,10 @@ class ChatActivity : AppCompatActivity() {
 
 
     private fun messagesListener(){
-        val reference = FirebaseDatabase.getInstance().getReference("/messages")
+
+        val toId = toUser.uid
+        val fromId = FirebaseAuth.getInstance().uid
+        val reference = FirebaseDatabase.getInstance().getReference("/messages/$fromId/$toId")
 
         reference.addChildEventListener(object : ChildEventListener {
 
@@ -67,12 +66,10 @@ class ChatActivity : AppCompatActivity() {
 
                 if(chatMessage != null){
 
-                    if(chatMessage.fromId == FirebaseAuth.getInstance().uid){
-                        adapter.add(ChatItemTo(chatMessage.text))
+                    if(chatMessage.fromId == fromId){
+                        adapter.add(ChatItemFrom(chatMessage.text))
                     }else{
-                        if(chatMessage.toId == toUser.uid){
-                            adapter.add(ChatItemFrom(chatMessage.text))
-                        }
+                        adapter.add(ChatItemTo(chatMessage.text))
                     }
                 }
 
@@ -98,32 +95,41 @@ class ChatActivity : AppCompatActivity() {
 
 
     fun sendMesssage(view: View){
-        // perform message sending to firebase
-        val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
+
+        val textMessage = entermessage_edittext_chatlog.text.toString()
+
         //obtain uid of current user
         val fromId = FirebaseAuth.getInstance().uid
-        //get the uid from previous activity
-        val toId = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY).uid
 
-        //check if editText if not empt
-        val textMessage = entermessage_edittext_chatlog.text.toString()
+        //get the uid of the user that message must be send
+        val toId = toUser.uid
+
+        val reference = FirebaseDatabase.getInstance().getReference("/messages/$fromId/$toId").push()
+        val toReference = FirebaseDatabase.getInstance().getReference("/messages/$toId/$fromId").push()
+
         if(entermessage_edittext_chatlog.text.isNotBlank()){
             val chatMessage = ChatMessage(reference.key!!, textMessage, fromId!!, toId, System.currentTimeMillis())
 
-            //push the message to firebase
+            //push the message to fromUser path on firebase
             reference.setValue(chatMessage).addOnSuccessListener {
-                Log.d("ChatActivity","Saved Sucessfully")
-
-                //clear editText
-                entermessage_edittext_chatlog.text.clear()
-
+                Log.d("ChatActivity","Saved Sucessfully to fromUser")
             }
 
+            //push the message to toUser path on firebase
+            toReference.setValue(chatMessage).addOnSuccessListener {
+                Log.d("ChatActivity","Saved Sucessfully to toUser")
+            }
+
+            //clear editText
+            entermessage_edittext_chatlog.text.clear()
+
+        }else{
+            if (entermessage_edittext_chatlog.text.isBlank()){
+                // implement shake animation for buttonSendMesage
+                send_button_chatlog.startAnimation(shakeAnimation)
+            }
         }
-        if (entermessage_edittext_chatlog.text.isBlank()){
-            // implement shake animation for buttonSendMesage
-            send_button_chatlog.startAnimation(shakeAnimation)
-        }
+
     }
 
 }
@@ -132,7 +138,7 @@ class ChatActivity : AppCompatActivity() {
 
 
 
-class ChatItemFrom(val text: String): Item<ViewHolder>(){
+class ChatItemTo(val text: String): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
 
         viewHolder.itemView.textView_from_row.text = text
@@ -141,13 +147,13 @@ class ChatItemFrom(val text: String): Item<ViewHolder>(){
 
     override fun getLayout(): Int {
 
-        return R.layout.chat_from_row_chatlog
+        return R.layout.chat_to_row
 
     }
 
 }
 
-class ChatItemTo(val text: String): Item<ViewHolder>(){
+class ChatItemFrom(val text: String): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
 
         viewHolder.itemView.textView_to_row.text = text
@@ -156,7 +162,7 @@ class ChatItemTo(val text: String): Item<ViewHolder>(){
 
     override fun getLayout(): Int {
 
-        return R.layout.chat_to_row_chatlog
+        return R.layout.chat_from_row
 
     }
 
