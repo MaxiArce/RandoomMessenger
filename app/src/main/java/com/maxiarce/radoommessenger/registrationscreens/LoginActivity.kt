@@ -9,7 +9,7 @@ import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
 import com.google.firebase.auth.FirebaseAuth
-import com.maxiarce.radoommessenger.MessagesActivity
+import com.maxiarce.radoommessenger.LatestMessagesActivity
 import com.maxiarce.radoommessenger.R
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -49,10 +49,10 @@ class LoginActivity : AppCompatActivity() {
 
             mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener {
                 if(it.isSuccessful){
-                    println("Logged into user:${it.result.user.uid}")
+                    println("Logged into user:${it.result!!.user.uid}")
 
                     //start MessageActivity with user data and clear previous activity
-                    val intent = Intent(this, MessagesActivity::class.java)
+                    val intent = Intent(this, LatestMessagesActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
                     finish()

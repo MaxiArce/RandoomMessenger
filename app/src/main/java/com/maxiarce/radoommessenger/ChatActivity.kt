@@ -11,14 +11,13 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.maxiarce.radoommessenger.chatviews.ChatItemFrom
+import com.maxiarce.radoommessenger.chatviews.ChatItemTo
 import com.maxiarce.radoommessenger.models.ChatMessage
 import com.maxiarce.radoommessenger.models.User
 import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_chat.*
-import kotlinx.android.synthetic.main.chat_to_row.view.*
-import kotlinx.android.synthetic.main.chat_from_row.view.*
 
 
 
@@ -42,6 +41,7 @@ class ChatActivity : AppCompatActivity() {
         //set recyclerview adapter
         chat_recyclerView_chatlog.adapter = adapter
 
+
         // set user name and image on the actionBar
         toUser = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
         supportActionBar?.title = toUser.username
@@ -50,8 +50,8 @@ class ChatActivity : AppCompatActivity() {
 //        Picasso.get().load(uri).into(??)
 
         messagesListener()
-    }
 
+    }
 
     private fun messagesListener(){
 
@@ -71,6 +71,7 @@ class ChatActivity : AppCompatActivity() {
                     }else{
                         adapter.add(ChatItemTo(chatMessage.text))
                     }
+                    chat_recyclerView_chatlog.smoothScrollToPosition(adapter.itemCount - 1)
                 }
 
             }
@@ -93,7 +94,6 @@ class ChatActivity : AppCompatActivity() {
         })
     }
 
-
     fun sendMesssage(view: View){
 
         val textMessage = entermessage_edittext_chatlog.text.toString()
@@ -113,6 +113,12 @@ class ChatActivity : AppCompatActivity() {
             //push the message to fromUser path on firebase
             reference.setValue(chatMessage).addOnSuccessListener {
                 Log.d("ChatActivity","Saved Sucessfully to fromUser")
+
+                //clear editText and scroll to last message
+                entermessage_edittext_chatlog.text.clear()
+                chat_recyclerView_chatlog.smoothScrollToPosition(adapter.itemCount - 1)
+
+
             }
 
             //push the message to toUser path on firebase
@@ -120,14 +126,17 @@ class ChatActivity : AppCompatActivity() {
                 Log.d("ChatActivity","Saved Sucessfully to toUser")
             }
 
-            //clear editText
-            entermessage_edittext_chatlog.text.clear()
+            //save last message on from and to user
+            val lastMessageFromRef =  FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
+            lastMessageFromRef.setValue(chatMessage)
+            val lastMessageToRef =  FirebaseDatabase.getInstance().getReference("/latest-messages/$toId/$fromId")
+            lastMessageToRef.setValue(chatMessage)
+
 
         }else{
-            if (entermessage_edittext_chatlog.text.isBlank()){
-                // implement shake animation for buttonSendMesage
+                // activate shake animation for buttonSendMesage
                 send_button_chatlog.startAnimation(shakeAnimation)
-            }
+
         }
 
     }
@@ -138,33 +147,4 @@ class ChatActivity : AppCompatActivity() {
 
 
 
-class ChatItemTo(val text: String): Item<ViewHolder>(){
-    override fun bind(viewHolder: ViewHolder, position: Int) {
-
-        viewHolder.itemView.textView_from_row.text = text
-
-    }
-
-    override fun getLayout(): Int {
-
-        return R.layout.chat_to_row
-
-    }
-
-}
-
-class ChatItemFrom(val text: String): Item<ViewHolder>(){
-    override fun bind(viewHolder: ViewHolder, position: Int) {
-
-        viewHolder.itemView.textView_to_row.text = text
-
-    }
-
-    override fun getLayout(): Int {
-
-        return R.layout.chat_from_row
-
-    }
-
-}
 

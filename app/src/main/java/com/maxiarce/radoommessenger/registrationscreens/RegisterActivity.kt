@@ -17,7 +17,7 @@ import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_register.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.maxiarce.radoommessenger.MessagesActivity
+import com.maxiarce.radoommessenger.LatestMessagesActivity
 import com.maxiarce.radoommessenger.R
 import com.maxiarce.radoommessenger.models.User
 import java.util.*
@@ -63,7 +63,7 @@ class RegisterActivity : AppCompatActivity() {
 
             mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener {
                 if (it.isSuccessful){
-                    Log.d("RegisterActivity","Registered ok, uid:" + it.result.user.uid)
+                    Log.d("RegisterActivity","Registered ok, uid:" + it.result!!.user.uid)
                     uploadImageToFirebaseStorage()
 
                 }else{
@@ -134,7 +134,7 @@ class RegisterActivity : AppCompatActivity() {
         ref.setValue(user).addOnSuccessListener {
             Log.d("RegisterActivity","User saved to Firebase DB")
 
-            val intent = Intent(this, MessagesActivity::class.java)
+            val intent = Intent(this, LatestMessagesActivity::class.java)
             startActivity(intent)
         }
 
