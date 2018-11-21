@@ -42,7 +42,6 @@ class LatestMessagesActivity : AppCompatActivity() {
             val intent = Intent(this,ChatActivity::class.java)
 
             val row = item as LatestChatMessageRow
-            Log.d(TAG,row.chatPartnerUser?.username.toString())
 
             intent.putExtra(NewMessageActivity.USER_KEY, row.chatPartnerUser)
             startActivity(intent)
