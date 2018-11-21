@@ -32,7 +32,7 @@ class RegisterActivity : AppCompatActivity() {
     lateinit var shakeAnimation: Animation
     lateinit var mAuth: FirebaseAuth
     lateinit var mStorageRef: StorageReference
-    lateinit var selectedPhotoUri: Uri
+    private var selectedPhotoUri: Uri? = null
 
 
 
@@ -45,6 +45,7 @@ class RegisterActivity : AppCompatActivity() {
         passwordEditText =  password_editext_login
         registerButton = button_register
         shakeAnimation = AnimationUtils.loadAnimation(this, R.anim.shake_animation)
+        selectphoto_imageview_register.setImageResource(R.mipmap.ic_camera_picture)
 
         //Firebase Authentication
         mAuth = FirebaseAuth.getInstance()
@@ -59,7 +60,6 @@ class RegisterActivity : AppCompatActivity() {
         val password = passwordEditText.text.toString()
 
             if (email.isNotEmpty() && password.isNotEmpty()){
-            Log.d("RegisterActivity", emailEditText.text.toString())
 
             mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener {
                 if (it.isSuccessful){
@@ -111,15 +111,16 @@ class RegisterActivity : AppCompatActivity() {
             val filename = UUID.randomUUID().toString()
 
             mStorageRef = FirebaseStorage.getInstance().getReference("/images/$filename")
-            mStorageRef.putFile(selectedPhotoUri).addOnSuccessListener {
+            mStorageRef.putFile(selectedPhotoUri!!).addOnSuccessListener {
 
                 Log.d("RegisterActivity","Image uploaded Successfully")
                 mStorageRef.downloadUrl.addOnSuccessListener {
                     saveUserToFirebaseDatabase(it.toString())
-
-                    Log.d("RegisterActivity","Url File Location:${it}")
                 }
             }
+        }
+        else{
+            saveUserToFirebaseDatabase("https://firebasestorage.googleapis.com/v0/b/randoom-messenger-android.appspot.com/o/images%2Fempty_avatar.png?alt=media&token=a1d341e9-6ed9-4317-9b73-2eadd51f0976")
         }
 
     }

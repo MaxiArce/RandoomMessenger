@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.view.inputmethod.EditorInfo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -18,7 +19,7 @@ import com.maxiarce.radoommessenger.models.User
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_chat.*
-
+import kotlinx.android.synthetic.main.activity_latest_messages.*
 
 
 class ChatActivity : AppCompatActivity() {
@@ -42,14 +43,28 @@ class ChatActivity : AppCompatActivity() {
         chat_recyclerView_chatlog.adapter = adapter
 
 
+
+
         // set user name and image on the actionBar
         toUser = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
         supportActionBar?.title = toUser.username
+
+        // set listener for keyboard send button
+        val editText = entermessage_edittext_chatlog
+        editText.setOnEditorActionListener { v, actionId, event ->
+            return@setOnEditorActionListener when (actionId){
+                EditorInfo.IME_ACTION_SEND -> {
+                    sendMesssage(v)
+                    true
+                }else -> false
+            }
+        }
 
 //        val uri = toUser.profileImageUrl
 //        Picasso.get().load(uri).into(??)
 
         messagesListener()
+
 
     }
 
@@ -94,7 +109,7 @@ class ChatActivity : AppCompatActivity() {
         })
     }
 
-    fun sendMesssage(view: View){
+    fun sendMesssage(v: View){
 
         val textMessage = entermessage_edittext_chatlog.text.toString()
 
@@ -140,6 +155,8 @@ class ChatActivity : AppCompatActivity() {
         }
 
     }
+
+
 
 }
 

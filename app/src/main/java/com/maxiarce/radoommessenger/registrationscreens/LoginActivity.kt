@@ -49,8 +49,6 @@ class LoginActivity : AppCompatActivity() {
 
             mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener {
                 if(it.isSuccessful){
-                    println("Logged into user:${it.result!!.user.uid}")
-
                     //start MessageActivity with user data and clear previous activity
                     val intent = Intent(this, LatestMessagesActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -58,11 +56,9 @@ class LoginActivity : AppCompatActivity() {
                     finish()
 
                 }else{
-                    println("ERROR")
+
                 }
             }
-        }else{
-            println("user already logged")
         }
     }
 }
