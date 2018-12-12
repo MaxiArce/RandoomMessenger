@@ -1,5 +1,7 @@
 package com.maxiarce.radoommessenger.chatviews
 
+import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -25,11 +27,17 @@ class LatestChatMessageRow(val chatMessage: ChatMessage): Item<ViewHolder>(){
         //set textMessage
         viewHolder.itemView.textview_latest_message.text = chatMessage.text
 
+        val chatPartnerId: String
+        if (chatMessage.fromId == FirebaseAuth.getInstance().uid) {
+            chatPartnerId = chatMessage.toId
+        } else {
+            chatPartnerId = chatMessage.fromId
+        }
+
         //set username
-        val ref = FirebaseDatabase.getInstance().getReference("/users/${chatMessage.toId}")
+        val ref = FirebaseDatabase.getInstance().getReference("/users/${chatPartnerId}")
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-
             }
 
             override fun onDataChange(p0: DataSnapshot) {
@@ -39,7 +47,6 @@ class LatestChatMessageRow(val chatMessage: ChatMessage): Item<ViewHolder>(){
                 //set avatar
                 val profilePicture = viewHolder.itemView.imageView_latest_message_avatar
                 Picasso.get().load(chatPartnerUser?.profileImageUrl).into(profilePicture)
-
 
             }
 

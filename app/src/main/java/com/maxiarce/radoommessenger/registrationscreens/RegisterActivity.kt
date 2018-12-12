@@ -2,6 +2,7 @@ package com.maxiarce.radoommessenger.registrationscreens
 
 import android.app.Activity
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -10,8 +11,11 @@ import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_register.*
@@ -25,6 +29,7 @@ import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
 
+    lateinit var progressBar: ProgressBar
     lateinit var usernameEditText: EditText
     lateinit var emailEditText: EditText
     lateinit var passwordEditText: EditText
@@ -40,6 +45,7 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+        progressBar = progressBar_register
         usernameEditText = username_editext_register
         emailEditText = email_editext_login
         passwordEditText =  password_editext_login
@@ -50,6 +56,16 @@ class RegisterActivity : AppCompatActivity() {
         //Firebase Authentication
         mAuth = FirebaseAuth.getInstance()
 
+        //setlistener for enter key
+        passwordEditText.setOnEditorActionListener { v, actionId, event ->
+            return@setOnEditorActionListener when (actionId){
+                EditorInfo.IME_ACTION_DONE -> {
+                    Register(v)
+                    true
+                }else -> false
+            }
+        }
+
 
 
     }
@@ -59,7 +75,9 @@ class RegisterActivity : AppCompatActivity() {
         val email = emailEditText.text.toString()
         val password = passwordEditText.text.toString()
 
-            if (email.isNotEmpty() && password.isNotEmpty()){
+        if (email.isNotEmpty() && password.isNotEmpty()){
+            progressBar.visibility = View.VISIBLE
+            registerButton.visibility = View.GONE
 
             mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener {
                 if (it.isSuccessful){
@@ -67,14 +85,18 @@ class RegisterActivity : AppCompatActivity() {
                     uploadImageToFirebaseStorage()
 
                 }else{
-                    Log.d("RegisterActivity","Fail")
+                    progressBar.visibility = View.GONE
+                    registerButton.visibility = View.VISIBLE
+                    registerButton.startAnimation(shakeAnimation)
+                    Toast.makeText(this,"Check the fields, something is wrong😱",Toast.LENGTH_LONG).show()
+
                 }
             }
 
         }else{
-                registerButton.startAnimation(shakeAnimation)
+            registerButton.startAnimation(shakeAnimation)
 
-            }
+        }
 
     }
 
@@ -120,7 +142,7 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
         else{
-            saveUserToFirebaseDatabase("https://firebasestorage.googleapis.com/v0/b/randoom-messenger-android.appspot.com/o/images%2Fempty_avatar.png?alt=media&token=a1d341e9-6ed9-4317-9b73-2eadd51f0976")
+            saveUserToFirebaseDatabase("https://firebasestorage.googleapis.com/v0/b/randoom-messenger-android.appspot.com/o/images%2Fempty_profile_pic.png?alt=media&token=8f6a526d-6643-4e87-ba6d-fc64342639f8")
         }
 
     }
@@ -136,6 +158,7 @@ class RegisterActivity : AppCompatActivity() {
             Log.d("RegisterActivity","User saved to Firebase DB")
 
             val intent = Intent(this, LatestMessagesActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             startActivity(intent)
         }
 

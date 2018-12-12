@@ -6,15 +6,20 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.maxiarce.radoommessenger.LatestMessagesActivity
 import com.maxiarce.radoommessenger.R
+import kotlinx.android.synthetic.main.abc_activity_chooser_view.view.*
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
 
+    lateinit var progressBar: ProgressBar
     lateinit var emailEditText: EditText
     lateinit var passwordEditText: EditText
     lateinit var loginButton: Button
@@ -26,7 +31,8 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-
+        imageView_logo_login.setImageResource(R.mipmap.ic_launcher)
+        progressBar = progressBar_login
         emailEditText = email_editext_login
         passwordEditText = password_editext_login
         loginButton = button_login
@@ -34,6 +40,15 @@ class LoginActivity : AppCompatActivity() {
 
         //Firebase Auth
         mAuth = FirebaseAuth.getInstance()
+
+        passwordEditText.setOnEditorActionListener { v, actionId, event ->
+            return@setOnEditorActionListener when (actionId){
+                EditorInfo.IME_ACTION_DONE -> {
+                    Login(v)
+                    true
+                }else -> false
+            }
+        }
 
     }
 
@@ -46,6 +61,8 @@ class LoginActivity : AppCompatActivity() {
         var currentUser = mAuth.currentUser
 
         if (email.isNotEmpty() && password.isNotEmpty() && currentUser == null){
+            progressBar.visibility = View.VISIBLE
+            loginButton.visibility = View.GONE
 
             mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener {
                 if(it.isSuccessful){
@@ -55,9 +72,13 @@ class LoginActivity : AppCompatActivity() {
                     startActivity(intent)
                     finish()
 
-                }else{
-
+                } else {
+                    progressBar.visibility = View.GONE
+                    loginButton.visibility = View.VISIBLE
+                    loginButton.startAnimation(shakeAnimation)
+                    Toast.makeText(this,"Wrong user or password",Toast.LENGTH_LONG).show()
                 }
+
             }
         }
     }
