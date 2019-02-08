@@ -9,13 +9,14 @@
         android:id="@+id/username_imageview_new_message"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/btn_star_big_on" />
+        app:srcCompat="@android:drawable/btn_star_big_on"
+        tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
         android:id="@+id/username_textview_new_message"
@@ -30,5 +31,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/username_imageview_new_message"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/username_imageview_new_message"
-        app:layout_constraintTop_toTopOf="@+id/username_imageview_new_message" />
+        app:layout_constraintTop_toTopOf="@+id/username_imageview_new_message"
+        tools:text="@tools:sample/full_names" />
+
 </android.support.constraint.ConstraintLayout>

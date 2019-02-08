@@ -5,13 +5,12 @@
 
     <item
         android:id="@+id/menu_sign_out"
+        android:icon="@drawable/ic_logout"
         android:title="Sign Out"
-        app:showAsAction="ifRoom"
-        android:icon="@android:drawable/ic_dialog_alert"
-        />
-    <item
-        android:id="@+id/menu_new_message"
-        android:icon="@android:drawable/ic_input_add"
-        android:title="New Message"
         app:showAsAction="ifRoom" />
+    <!--<item-->
+        <!--android:id="@+id/menu_new_message"-->
+        <!--android:icon="@drawable/ic_add_message"-->
+        <!--android:title="New Message"-->
+        <!--app:showAsAction="ifRoom" />-->
 </menu>

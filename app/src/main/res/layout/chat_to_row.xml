@@ -3,19 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MessagesActivity">
+    android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/test_user_textview"
+        android:id="@+id/textView_from_row"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:text="TextView"
-        android:textStyle="bold"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/shape_background_to_bubble"
+        android:gravity="center"
+        android:maxWidth="260dp"
+        android:paddingLeft="15dp"
+        android:paddingTop="2dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="2dp"
+        android:text="Test Received Message"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </android.support.constraint.ConstraintLayout>
