@@ -2,11 +2,10 @@ package com.maxiarce.radoommessenger.registrationscreens
 
 import android.app.Activity
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
@@ -18,12 +17,13 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import kotlinx.android.synthetic.main.activity_register.*
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.maxiarce.radoommessenger.LatestMessagesActivity
 import com.maxiarce.radoommessenger.R
 import com.maxiarce.radoommessenger.models.User
+import kotlinx.android.synthetic.main.activity_register.*
 import java.util.*
 
 
@@ -37,6 +37,7 @@ class RegisterActivity : AppCompatActivity() {
     lateinit var shakeAnimation: Animation
     lateinit var mAuth: FirebaseAuth
     lateinit var mStorageRef: StorageReference
+    lateinit var tokenUser : String
     private var selectedPhotoUri: Uri? = null
 
 
@@ -55,6 +56,7 @@ class RegisterActivity : AppCompatActivity() {
 
         //Firebase Authentication
         mAuth = FirebaseAuth.getInstance()
+        getToken()
 
         //setlistener for enter key
         passwordEditText.setOnEditorActionListener { v, actionId, event ->
@@ -142,7 +144,8 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
         else{
-            saveUserToFirebaseDatabase("https://firebasestorage.googleapis.com/v0/b/randoom-messenger-android.appspot.com/o/images%2Fempty_profile_pic.png?alt=media&token=8f6a526d-6643-4e87-ba6d-fc64342639f8")
+            //set empty profile pic url
+            saveUserToFirebaseDatabase("https://firebasestorage.googleapis.com/v0/b/messenger-app-58dce.appspot.com/o/empty_profile_pic.png?alt=media&token=ee169717-a272-445a-86ce-1afb45f541b5")
         }
 
     }
@@ -152,7 +155,7 @@ class RegisterActivity : AppCompatActivity() {
         val uid = FirebaseAuth.getInstance().uid ?:""
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
 
-        val user = User(uid, usernameEditText.text.toString(), profileUrl)
+        val user = User(uid, usernameEditText.text.toString(), profileUrl,tokenUser)
 
         ref.setValue(user).addOnSuccessListener {
             Log.d("RegisterActivity","User saved to Firebase DB")
@@ -163,6 +166,15 @@ class RegisterActivity : AppCompatActivity() {
         }
 
     }
+
+    fun getToken() {
+        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener{
+            Log.d("TOKEN",it.token)
+            tokenUser = it.token
+        }
+    }
+
+
 
 }
 

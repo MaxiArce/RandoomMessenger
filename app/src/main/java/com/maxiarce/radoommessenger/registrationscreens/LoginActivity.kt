@@ -3,6 +3,7 @@ package com.maxiarce.radoommessenger.registrationscreens
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -11,11 +12,13 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
-import com.google.firebase.auth.FirebaseAuth
-import com.maxiarce.radoommessenger.LatestMessagesActivity
 import com.maxiarce.radoommessenger.R
-import kotlinx.android.synthetic.main.abc_activity_chooser_view.view.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.iid.FirebaseInstanceId
+import com.maxiarce.radoommessenger.LatestMessagesActivity
 import kotlinx.android.synthetic.main.activity_login.*
+
 
 class LoginActivity : AppCompatActivity() {
 
@@ -40,6 +43,7 @@ class LoginActivity : AppCompatActivity() {
 
         //Firebase Auth
         mAuth = FirebaseAuth.getInstance()
+
 
         passwordEditText.setOnEditorActionListener { v, actionId, event ->
             return@setOnEditorActionListener when (actionId){
@@ -66,6 +70,8 @@ class LoginActivity : AppCompatActivity() {
 
             mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener {
                 if(it.isSuccessful){
+                    //refresh user token
+                    getToken()
                     //start MessageActivity with user data and clear previous activity
                     val intent = Intent(this, LatestMessagesActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -82,4 +88,15 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
+    fun getToken() {
+        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener{
+
+            val uid = FirebaseAuth.getInstance().uid
+            val ref = FirebaseDatabase.getInstance().getReference("/users/")
+            ref.child("$uid").child("token").setValue(it.token)
+        }
+    }
+
+
 }

@@ -11,8 +11,10 @@ import android.view.MenuItem
 import android.view.View
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.iid.FirebaseInstanceId
 import com.maxiarce.radoommessenger.chatviews.LatestChatMessageRow
 import com.maxiarce.radoommessenger.models.ChatMessage
+import com.maxiarce.radoommessenger.models.User
 import com.maxiarce.radoommessenger.registrationscreens.RegisterActivity
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
@@ -25,6 +27,7 @@ class LatestMessagesActivity : AppCompatActivity() {
     companion object {
         val TAG = "LatestMessagesActiviy"
     }
+    val fromId = FirebaseAuth.getInstance().uid
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,9 +37,10 @@ class LatestMessagesActivity : AppCompatActivity() {
 
         val toolbar: Toolbar  = findViewById(R.id.toolbar_latest_messages)
         setSupportActionBar(toolbar)
-        val ActionBar = supportActionBar!!
-        ActionBar.setTitle("Radoom Messenger")
-        ActionBar.setIcon(R.drawable.ic_main_icon)
+        val actionBar = supportActionBar!!
+        actionBar.title = "Radoom Messenger"
+        actionBar.setIcon(R.drawable.ic_main_icon)
+
 
 
 
@@ -75,8 +79,9 @@ class LatestMessagesActivity : AppCompatActivity() {
     }
 
     private fun  listenForLatestMessages(){
-        val fromId = FirebaseAuth.getInstance().uid
+
         val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId")
+
         ref.addChildEventListener(object: ChildEventListener{
 
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
@@ -124,11 +129,13 @@ class LatestMessagesActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId){
-//            R.id.menu_new_message ->{
-//                val intent = Intent(this,NewMessageActivity::class.java)
-//                startActivity(intent)
-//            }
+
             R.id.menu_sign_out ->{
+                //delete token from database to avoid notifications
+                val ref = FirebaseDatabase.getInstance().getReference("/users/$fromId/")
+                ref.child("token").setValue("")
+
+
                 FirebaseAuth.getInstance().signOut()
                 val intent = Intent(this, RegisterActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK.or(Intent.FLAG_ACTIVITY_CLEAR_TASK)

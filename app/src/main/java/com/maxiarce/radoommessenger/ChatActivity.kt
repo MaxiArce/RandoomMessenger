@@ -2,6 +2,7 @@ package com.maxiarce.radoommessenger
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
@@ -16,10 +17,12 @@ import com.maxiarce.radoommessenger.chatviews.ChatItemFrom
 import com.maxiarce.radoommessenger.chatviews.ChatItemTo
 import com.maxiarce.radoommessenger.models.ChatMessage
 import com.maxiarce.radoommessenger.models.User
+import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.activity_latest_messages.*
+import kotlinx.android.synthetic.main.latest_messages_row.view.*
 
 
 class ChatActivity : AppCompatActivity() {
@@ -39,15 +42,22 @@ class ChatActivity : AppCompatActivity() {
         //init var
         shakeAnimation = AnimationUtils.loadAnimation(this,R.anim.shake_animation)
 
+        //get toUser from prev activity
+        toUser = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
+
         //set recyclerview adapter
         chat_recyclerView_chatlog.adapter = adapter
 
 
+        // set toolBar
+        val toolbar: Toolbar = findViewById(R.id.toolbar_chat_activity)
+        setSupportActionBar(toolbar)
+        val ActionBar = supportActionBar!!
+        ActionBar.setTitle(toUser.username)
 
-
-        // set user name and image on the actionBar
-        toUser = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
-        supportActionBar?.title = toUser.username
+        //set profile image on toolbar
+        val profilePicture = imageView_profile_chat_toolbar
+        Picasso.get().load(toUser?.profileImageUrl).into(profilePicture)
 
         // set listener for keyboard send button
         val editText = entermessage_edittext_chatlog
