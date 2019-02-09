@@ -44,6 +44,7 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_register)
 
         progressBar = progressBar_register
@@ -58,11 +59,11 @@ class RegisterActivity : AppCompatActivity() {
         mAuth = FirebaseAuth.getInstance()
         getToken()
 
-        //setlistener for enter key
-        passwordEditText.setOnEditorActionListener { v, actionId, event ->
+        ///Trigger register using enter key on keyboard
+        passwordEditText.setOnEditorActionListener { v, actionId, _ ->
             return@setOnEditorActionListener when (actionId){
                 EditorInfo.IME_ACTION_DONE -> {
-                    Register(v)
+                    register(v)
                     true
                 }else -> false
             }
@@ -72,15 +73,17 @@ class RegisterActivity : AppCompatActivity() {
 
     }
 
-    fun Register(view: View){
+    fun register(view: View){
 
         val email = emailEditText.text.toString()
         val password = passwordEditText.text.toString()
 
+        //check fields are not empty before authentication
         if (email.isNotEmpty() && password.isNotEmpty()){
             progressBar.visibility = View.VISIBLE
             registerButton.visibility = View.GONE
 
+            //create new user on firebase with email authentication
             mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener {
                 if (it.isSuccessful){
                     Log.d("RegisterActivity","Registered ok, uid:" + it.result!!.user.uid)
@@ -102,12 +105,13 @@ class RegisterActivity : AppCompatActivity() {
 
     }
 
-    fun Login(view: View){
+    fun login(view: View){
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
     }
 
-    fun SelectPhoto(view: View){
+    // open galery to pickup pic
+    fun selectPhoto(view: View){
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         startActivityForResult(intent,0)
@@ -122,13 +126,13 @@ class RegisterActivity : AppCompatActivity() {
             selectedPhotoUri = data.data
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver,selectedPhotoUri)
 
-
             selectphoto_imageview_register.setImageBitmap(bitmap)
             selectphoto_button_register.alpha = 0f
 
         }
     }
 
+    // Upload image to firebase storage
     private fun uploadImageToFirebaseStorage(){
 
         if(selectedPhotoUri != null){
@@ -138,6 +142,7 @@ class RegisterActivity : AppCompatActivity() {
             mStorageRef.putFile(selectedPhotoUri!!).addOnSuccessListener {
 
                 Log.d("RegisterActivity","Image uploaded Successfully")
+
                 mStorageRef.downloadUrl.addOnSuccessListener {
                     saveUserToFirebaseDatabase(it.toString())
                 }
@@ -150,6 +155,7 @@ class RegisterActivity : AppCompatActivity() {
 
     }
 
+    // get the profile pic url and save the user to firebase database
     private fun saveUserToFirebaseDatabase(profileUrl: String){
 
         val uid = FirebaseAuth.getInstance().uid ?:""
@@ -167,13 +173,13 @@ class RegisterActivity : AppCompatActivity() {
 
     }
 
-    fun getToken() {
+    //get the token assigned to the device and send it to firebase database
+    private fun getToken() {
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener{
             Log.d("TOKEN",it.token)
             tokenUser = it.token
         }
     }
-
 
 
 }

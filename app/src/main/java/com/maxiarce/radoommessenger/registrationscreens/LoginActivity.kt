@@ -32,23 +32,28 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //Set layout
         setContentView(R.layout.activity_login)
 
-        imageView_logo_login.setImageResource(R.mipmap.ic_launcher)
         progressBar = progressBar_login
         emailEditText = email_editext_login
         passwordEditText = password_editext_login
         loginButton = button_login
         shakeAnimation = AnimationUtils.loadAnimation(this, R.anim.shake_animation)
 
+
+        //Set Image Logo
+        imageView_logo_login.setImageResource(R.mipmap.ic_launcher)
+
         //Firebase Auth
         mAuth = FirebaseAuth.getInstance()
 
-
+        //Trigger login using enter key on keyboard
         passwordEditText.setOnEditorActionListener { v, actionId, event ->
             return@setOnEditorActionListener when (actionId){
                 EditorInfo.IME_ACTION_DONE -> {
-                    Login(v)
+                    login(v)
                     true
                 }else -> false
             }
@@ -57,21 +62,24 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
-    fun Login(view: View){
+    fun login(view: View){
 
 
         val email = emailEditText.text.toString()
         val password = passwordEditText.text.toString()
-        var currentUser = mAuth.currentUser
+        val currentUser = mAuth.currentUser
 
+        //Check fields are not empty before calling Firebase Auth - otherwise it triggers a toast and animation on login button
         if (email.isNotEmpty() && password.isNotEmpty() && currentUser == null){
             progressBar.visibility = View.VISIBLE
             loginButton.visibility = View.GONE
 
             mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener {
                 if(it.isSuccessful){
-                    //refresh user token
+
+                    //refresh user token from firebase
                     getToken()
+
                     //start MessageActivity with user data and clear previous activity
                     val intent = Intent(this, LatestMessagesActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -83,18 +91,20 @@ class LoginActivity : AppCompatActivity() {
                     loginButton.visibility = View.VISIBLE
                     loginButton.startAnimation(shakeAnimation)
                     Toast.makeText(this,"Wrong user or password",Toast.LENGTH_LONG).show()
+
                 }
 
             }
         }
     }
 
-    fun getToken() {
+    //Get the token assigned to the device and send it to firebase database
+    private fun getToken() {
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener{
-
             val uid = FirebaseAuth.getInstance().uid
             val ref = FirebaseDatabase.getInstance().getReference("/users/")
             ref.child("$uid").child("token").setValue(it.token)
+
         }
     }
 

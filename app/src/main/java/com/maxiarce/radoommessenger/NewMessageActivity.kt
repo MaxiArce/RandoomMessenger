@@ -33,7 +33,7 @@ class NewMessageActivity : AppCompatActivity() {
 
     }
 
-
+    //get list of all users on database
     private fun fetchUsers(){
 
         val ref = FirebaseDatabase.getInstance().getReference("/users/")
@@ -55,10 +55,10 @@ class NewMessageActivity : AppCompatActivity() {
                     }
                 }
 
+                //set onClick for every row
                 adapter.setOnItemClickListener { item, view ->
 
                     val userItem = item as UserItem
-
                     val intent = Intent(this@NewMessageActivity,ChatActivity::class.java)
                     intent.putExtra(USER_KEY, userItem.user)
                     startActivity(intent)
@@ -73,13 +73,12 @@ class NewMessageActivity : AppCompatActivity() {
     }
 }
 
-
+// bind every row of user
 class UserItem(val user: User): Item<ViewHolder>() {
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
 
         viewHolder.itemView.username_textview_new_message.text = user.username
-
 
         if(user.profileImageUrl.isNotEmpty()) {
             Picasso.get().load(user.profileImageUrl).into(viewHolder.itemView.username_imageview_new_message)

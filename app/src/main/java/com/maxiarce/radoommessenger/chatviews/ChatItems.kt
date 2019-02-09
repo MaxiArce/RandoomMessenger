@@ -6,6 +6,8 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.chat_from_row.view.*
 import kotlinx.android.synthetic.main.chat_to_row.view.*
 
+//  item views for the chat bubbles - used to fill the recyclerview on ChatActivity
+
 class ChatItemTo(val text: String): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
 
