@@ -1,7 +1,9 @@
 package com.maxiarce.radoommessenger
 
-import android.support.v7.app.AppCompatActivity
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.View
@@ -21,8 +23,6 @@ import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_chat.*
-import kotlinx.android.synthetic.main.activity_latest_messages.*
-import kotlinx.android.synthetic.main.latest_messages_row.view.*
 
 
 class ChatActivity : AppCompatActivity() {
@@ -37,6 +37,7 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_chat)
 
         //init var
@@ -48,20 +49,17 @@ class ChatActivity : AppCompatActivity() {
         //set recyclerview adapter
         chat_recyclerView_chatlog.adapter = adapter
 
-
         // set toolBar
         val toolbar: Toolbar = findViewById(R.id.toolbar_chat_activity)
         setSupportActionBar(toolbar)
-        val ActionBar = supportActionBar!!
-        ActionBar.setTitle(toUser.username)
-
-        //set profile image on toolbar
+        val actionBar = supportActionBar!!
+        actionBar.title = toUser.username
         val profilePicture = imageView_profile_chat_toolbar
-        Picasso.get().load(toUser?.profileImageUrl).into(profilePicture)
+        Picasso.get().load(toUser.profileImageUrl).into(profilePicture)
 
         // set listener for keyboard send button
         val editText = entermessage_edittext_chatlog
-        editText.setOnEditorActionListener { v, actionId, event ->
+        editText.setOnEditorActionListener { v, actionId, _ ->
             return@setOnEditorActionListener when (actionId){
                 EditorInfo.IME_ACTION_SEND -> {
                     sendMesssage(v)
@@ -70,14 +68,12 @@ class ChatActivity : AppCompatActivity() {
             }
         }
 
-//        val uri = toUser.profileImageUrl
-//        Picasso.get().load(uri).into(??)
-
         messagesListener()
 
 
     }
 
+    //Listen for changes changes on firebase database and show the messages
     private fun messagesListener(){
 
         val toId = toUser.uid
@@ -110,14 +106,13 @@ class ChatActivity : AppCompatActivity() {
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
             }
 
-
-
             override fun onChildRemoved(p0: DataSnapshot) {
             }
 
 
         })
     }
+
 
     fun sendMesssage(v: View){
 
@@ -137,12 +132,9 @@ class ChatActivity : AppCompatActivity() {
 
             //push the message to fromUser path on firebase
             reference.setValue(chatMessage).addOnSuccessListener {
-                Log.d("ChatActivity","Saved Sucessfully to fromUser")
-
                 //clear editText and scroll to last message
                 entermessage_edittext_chatlog.text.clear()
                 chat_recyclerView_chatlog.smoothScrollToPosition(adapter.itemCount - 1)
-
 
             }
 
@@ -161,7 +153,6 @@ class ChatActivity : AppCompatActivity() {
         }else{
                 // activate shake animation for buttonSendMesage
                 send_button_chatlog.startAnimation(shakeAnimation)
-
         }
 
     }

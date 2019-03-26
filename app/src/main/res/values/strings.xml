@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Randoom Messenger</string>
+    <string name="email">Email</string>
+    <string name="logo_image">Logo Image</string>
+    <string name="login">Login</string>
+    <string name="select_photo">SELECT PHOTO</string>
+    <string name="username">Username</string>
+    <string name="register">Register</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="password">Password</string>
+    <string name="enter_message">Enter Message</string>
+    <string name="test_message_demo">Test Message</string>
+    <string name="test_received_message_demo">Test Received Message</string>
+    <string name="latest_message_text">Latest Message Text</string>
 </resources>

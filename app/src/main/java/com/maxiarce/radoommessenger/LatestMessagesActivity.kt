@@ -24,17 +24,15 @@ class LatestMessagesActivity : AppCompatActivity() {
 
     private val adapter = GroupAdapter<ViewHolder>()
     private val latestChatMessagesMap = HashMap<String,ChatMessage>()
-    companion object {
-        val TAG = "LatestMessagesActiviy"
-    }
-    val fromId = FirebaseAuth.getInstance().uid
+    private val fromId = FirebaseAuth.getInstance().uid
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_latest_messages)
 
-
+        //set ToolBar
         val toolbar: Toolbar  = findViewById(R.id.toolbar_latest_messages)
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar!!
@@ -42,12 +40,10 @@ class LatestMessagesActivity : AppCompatActivity() {
         actionBar.setIcon(R.drawable.ic_main_icon)
 
 
-
-
         recyclerView_latest_messages.adapter = adapter
         recyclerView_latest_messages.addItemDecoration(DividerItemDecoration(this,DividerItemDecoration.VERTICAL))
 
-        //setonclicklistener for the recyclerView
+        //set onclicklistener for the recyclerView
         adapter.setOnItemClickListener { item, view ->
 
             val intent = Intent(this,ChatActivity::class.java)
@@ -57,16 +53,17 @@ class LatestMessagesActivity : AppCompatActivity() {
             intent.putExtra(NewMessageActivity.USER_KEY, row.chatPartnerUser)
             startActivity(intent)
         }
+
         verifyUserIsLoggedIn()
 
         listenForLatestMessages()
 
     }
 
+    //check if user is already logged in, if is not then open register activity
     private fun verifyUserIsLoggedIn(){
-
-        //check if user is already logged in, and send to register activity
         val uid = FirebaseAuth.getInstance().uid
+
         if(uid == null){
             Log.d("LatestMessagesActivity","User not logged in")
             val intent = Intent(this, RegisterActivity::class.java)
@@ -78,6 +75,7 @@ class LatestMessagesActivity : AppCompatActivity() {
         }
     }
 
+    //Lister for latest Messages and add to recyclerView
     private fun  listenForLatestMessages(){
 
         val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId")
@@ -134,7 +132,6 @@ class LatestMessagesActivity : AppCompatActivity() {
                 //delete token from database to avoid notifications
                 val ref = FirebaseDatabase.getInstance().getReference("/users/$fromId/")
                 ref.child("token").setValue("")
-
 
                 FirebaseAuth.getInstance().signOut()
                 val intent = Intent(this, RegisterActivity::class.java)

@@ -1,6 +1,5 @@
 package com.maxiarce.radoommessenger.chatviews
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -13,6 +12,8 @@ import com.squareup.picasso.Picasso
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.latest_messages_row.view.*
+
+//  item views  used to fill the recyclerview on LatestMessagesActivity
 
 class LatestChatMessageRow(val chatMessage: ChatMessage): Item<ViewHolder>(){
 
@@ -28,6 +29,7 @@ class LatestChatMessageRow(val chatMessage: ChatMessage): Item<ViewHolder>(){
         viewHolder.itemView.textview_latest_message.text = chatMessage.text
 
         val chatPartnerId: String
+
         if (chatMessage.fromId == FirebaseAuth.getInstance().uid) {
             chatPartnerId = chatMessage.toId
         } else {
