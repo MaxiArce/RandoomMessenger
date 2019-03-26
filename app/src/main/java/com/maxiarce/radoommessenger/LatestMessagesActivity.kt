@@ -1,8 +1,8 @@
 package com.maxiarce.radoommessenger
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.Toolbar
 import android.util.Log
@@ -10,11 +10,12 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
-import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
 import com.maxiarce.radoommessenger.chatviews.LatestChatMessageRow
 import com.maxiarce.radoommessenger.models.ChatMessage
-import com.maxiarce.radoommessenger.models.User
 import com.maxiarce.radoommessenger.registrationscreens.RegisterActivity
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
@@ -36,7 +37,7 @@ class LatestMessagesActivity : AppCompatActivity() {
         val toolbar: Toolbar  = findViewById(R.id.toolbar_latest_messages)
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar!!
-        actionBar.title = "Radoom Messenger"
+        actionBar.title = "Randoom Messenger"
         actionBar.setIcon(R.drawable.ic_main_icon)
 
 
